@@ -14,8 +14,6 @@ export class StaticServer extends Server {
         srv.once("data", function(request) {
             let fpath:string = request.toString('ascii').split(' ')[1];
             let fpathsplit = fpath.split("/");
-            let bufout: Buffer = new Buffer("");
-            let restxt:string = "";
             let tpath:string = "";
             let res:string = "";
 
@@ -25,17 +23,29 @@ export class StaticServer extends Server {
                 } else {
                     tpath = path.join(staticfloderpath, fpath+".html");
                 }
-                bufout = fs.readFileSync(tpath);
-                restxt = bufout.toString();
+                let bufout: Buffer = fs.readFileSync(tpath);
+                let restxt:string = bufout.toString();
                 res = `HTTP/1.1 200 OK
 Content-Type: ${mime.getType(tpath)}
 Content-Length: ${restxt.length}
 
-
 ${restxt}`;
             } catch(e) {
-                restxt = ``;
+                let restxt:string = `<!DOCTYPE html>
+<html>
+    <head>
+        <head>404 Not found</head>
+    </head>
+    <body>
+        <h1>404</h1>
+        <p>Error: ${e.toString()}</p>
+    </body>
+</html>`;
                 res = `HTTP/1.1 404 NOT FOUND
+Content-Type: text/html
+Content-Length: ${restxt.length}
+
+${restxt}
 `;
             }
             srv.write(res)
