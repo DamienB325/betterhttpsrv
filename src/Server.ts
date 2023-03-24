@@ -2,10 +2,10 @@ import * as net from "net";
 export class Server {
     srv: any = null;
     constructor() {
-        this.srv = net.createServer(this.addClassListener);
+        this.srv = net.createServer(this._addClassListener);
         // this.addClassListener(this.srv);
     }
-    addClassListener(srv: net.Socket) {
+    _addClassListener(srv: net.Socket) {
         srv.once("data", function(request) {
            let restxt = `<!DOCTYPE html>
 <html>
