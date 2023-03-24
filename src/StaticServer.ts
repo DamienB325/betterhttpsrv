@@ -12,17 +12,19 @@ export class StaticServer extends Server {
     override _addClassListener(srv: net.Socket) {
         let staticfloderpath = this.staticFolderPath;
         srv.once("data", function(request) {
-            let fpath:string = request.toString('ascii').split(' ')[1];
+            let fpath:string = request.toString().split(' ')[1];
             let fpathsplit = fpath.split("/");
             let tpath:string = "";
             let res:string = "";
 
             try {
-                if(fpathsplit[fpathsplit.length].includes(".")) {
+                tpath = path.join(staticfloderpath, fpath+".html");
+                if((fpathsplit[fpathsplit.length]).includes(".")) {
                     tpath = path.join(staticfloderpath, fpath);
-                } else {
-                    tpath = path.join(staticfloderpath, fpath+".html");
-                }
+                }// else {
+                   // tpath = path.join(staticfloderpath, fpath+".html");
+                //}
+                console.log(tpath);
                 let bufout: Buffer = fs.readFileSync(tpath);
                 let restxt:string = bufout.toString();
                 res = `HTTP/1.1 200 OK
@@ -30,7 +32,7 @@ Content-Type: ${mime.getType(tpath)}
 Content-Length: ${restxt.length}
 
 ${restxt}`;
-            } catch(e) {
+            } catch(e: any) {
                 let restxt:string = `<!DOCTYPE html>
 <html>
     <head>
